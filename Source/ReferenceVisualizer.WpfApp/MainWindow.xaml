@@ -1,0 +1,91 @@
+﻿<Window x:Class="ReferenceVisualizer.WpfApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:gs="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
+        xmlns:wpfext="clr-namespace:WPFExtensions.Controls;assembly=WPFExtensions"
+        Title="Projects Reference Visualizer | Beta | Tomas Jecha (tomas@jecha.net)" Height="350" Width="525" WindowState="Maximized">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Button.Padding" Value="5" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="TextBox.Margin" Value="5" />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="80" />
+                </Grid.ColumnDefinitions>
+                <Label Content="Path:" Target="{Binding ElementName=txtPath, Mode=OneWay}" />
+                <TextBox x:Name="txtPath" Text="{Binding Path}" Grid.Column="1" />
+                <Button Grid.Column="2"  Content="Browse..." Command="{Binding BrowseCommand}"/>
+                <Button Grid.Column="3"  Content="Load" Command="{Binding LoadCommand}" />
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Content="Layout algorithms:" />
+                <ItemsControl Name="layoutAlgorithms" ItemsSource="{Binding}" Grid.Column="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding}" Command="" Click="ApplyLayoutButton_Click" Background="White" Margin="5 0 0 0" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </StackPanel>
+        <wpfext:ZoomControl Grid.Row="1" Name="zoomControl">
+            <gs:GraphLayout
+                x:Name="graphLayout" 
+                Graph="{Binding Graph}"
+                LayoutAlgorithmType="LinLog" 
+                OverlapRemovalAlgorithmType="FSA">
+                <gs:GraphLayout.Resources>
+                    <Style TargetType="{x:Type gs:VertexControl}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type gs:VertexControl}">
+                                    <Border CornerRadius="3" BorderThickness="1" Padding="5" DataContext="{TemplateBinding Vertex}">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="#FFA3E8AF" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding State}" Value="NotFound">
+                                                        <Setter Property="Background" Value="Red" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding State}" Value="OutOfBound">
+                                                        <Setter Property="Background" Value="Yellow" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}" FontSize="16"/>
+                                            <TextBlock Text="{Binding Path}" FontSize="9"/>
+                                        </StackPanel>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </gs:GraphLayout.Resources>
+            </gs:GraphLayout>
+        </wpfext:ZoomControl>
+    </Grid>
+</Window>

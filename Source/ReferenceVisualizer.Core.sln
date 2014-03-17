@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferenceVisualizer.Core", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferenceVisualizer.WpfApp", "ReferenceVisualizer.WpfApp\ReferenceVisualizer.WpfApp.csproj", "{A883D9BF-1659-4887-8881-1868CDD2F357}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferenceVisualizer.WpfApp.Controls", "ReferenceVisualizer.WpfApp.Controls\ReferenceVisualizer.WpfApp.Controls.csproj", "{33498561-33C4-4461-9160-3E2EB8CE634F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{A883D9BF-1659-4887-8881-1868CDD2F357}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A883D9BF-1659-4887-8881-1868CDD2F357}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A883D9BF-1659-4887-8881-1868CDD2F357}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33498561-33C4-4461-9160-3E2EB8CE634F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33498561-33C4-4461-9160-3E2EB8CE634F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33498561-33C4-4461-9160-3E2EB8CE634F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33498561-33C4-4461-9160-3E2EB8CE634F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

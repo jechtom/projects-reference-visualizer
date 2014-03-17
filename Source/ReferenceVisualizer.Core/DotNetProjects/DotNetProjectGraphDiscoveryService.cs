@@ -13,6 +13,8 @@ namespace ReferenceVisualizer.Core.DotNetProjects
     public class DotNetProjectGraphDiscoveryService : IGraphDiscoveryService
     {
         private CsprojFileDataReader csprojFileReader = new CsprojFileDataReader();
+        private SolutionFileDataReader slnFileReader = new SolutionFileDataReader();
+        private IDotNetProjectGraphBuilder builder;
 
         public string FolderPath { get; set; }
 
@@ -26,97 +28,86 @@ namespace ReferenceVisualizer.Core.DotNetProjects
             }
         }
 
+        public DotNetProjectGraphDiscoveryService(IDotNetProjectGraphBuilder builder)
+        {
+            if (builder == null)
+                throw new ArgumentNullException("builder");
+
+            this.builder = builder;
+        }
+
         public Task<GraphData> Resolve(System.Threading.CancellationToken cancellationToken, IProgress<DiscoveryProgress> progress)
         {
             return Task.Factory.StartNew<GraphData>(() => {
-                var files = new List<CsprojFileData>();
-
-                // find csproj files
-                foreach (var fileName in System.IO.Directory.EnumerateFiles(FolderPath, "*.csproj", System.IO.SearchOption.AllDirectories))
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    progress.Report(new DiscoveryProgress() { CurrentItem = fileName });
-
-                    CsprojFileData csprojData = null;
-                    try
-                    {
-                        csprojData = csprojFileReader.ReadFromFile(fileName);
-                    }
-                    catch(Exception e)
-                    {
-                        Debug.WriteLine("Error reading CSPROJ: " + e.Message);
-                    }
-
-                    if(csprojData != null)
-                        files.Add(csprojData);
-                }
-
+                
+                // read *.csproj projects
+                var projects = FindCsprojFiles(cancellationToken, progress);
                 cancellationToken.ThrowIfCancellationRequested();
-
+                
+                // read *.sln files
+                var solutions = FindSlnFiles(cancellationToken, progress);
+                cancellationToken.ThrowIfCancellationRequested();
+                
                 // build result
-                var result = new GraphData();
-                ApplyToGraphData(result, files);
+                var result = builder.Build(this, projects, solutions);
                 return result;
             });
         }
 
-        private void ApplyToGraphData(GraphData graphData, ICollection<CsprojFileData> fileData)
+        private ICollection<CsprojFileData> FindCsprojFiles(System.Threading.CancellationToken cancellationToken, IProgress<DiscoveryProgress> progress)
         {
-            // crete nodes from csproj data
-            var data = fileData.Select(fd => new
-            {
-                FileData = fd,
-                Node = CreateNodeFromCsprojFileData(fd, NodeState.Normal)
-            }).ToList();
+            var files = new List<CsprojFileData>();
 
-            // references
-            graphData.References = new List<ReferenceDefinition>();
-            foreach (var item in data.ToArray())
+            // find csproj files
+            foreach (var fileName in System.IO.Directory.EnumerateFiles(FolderPath, "*.csproj", System.IO.SearchOption.AllDirectories))
             {
-                var directory = Path.GetDirectoryName(item.FileData.FileName);
+                cancellationToken.ThrowIfCancellationRequested();
 
-                foreach (var reference in item.FileData.References)
+                progress.Report(new DiscoveryProgress() { CurrentItem = fileName });
+
+                CsprojFileData csprojData = null;
+                try
                 {
-                    // resolve path and find csproj file
-                    string referencePath = Path.GetFullPath(Path.Combine(directory, reference));
-                    var referencedNode = data.FirstOrDefault(i => string.Equals(i.FileData.FileName, referencePath, StringComparison.OrdinalIgnoreCase));
-
-                    if (referencedNode == null)
-                    {
-                        // not found - create "not found" node
-                        bool outOfBound = referencePath.IndexOf(this.FolderPathFullPath, StringComparison.OrdinalIgnoreCase) == -1; 
-                        var missingReferenceData = new CsprojFileData() { FileName = referencePath };
-                        referencedNode = new
-                        {
-                            FileData = missingReferenceData,
-                            Node = CreateNodeFromCsprojFileData(missingReferenceData, outOfBound ? NodeState.OutOfBound : NodeState.NotFound)
-                        };
-                        data.Add(referencedNode);
-                    }
-
-                    // create reference
-                    graphData.References.Add(new ReferenceDefinition()
-                        {
-                            NodeFromId = item.Node.Id,
-                            NodeToId = referencedNode.Node.Id
-                        });
+                    csprojData = csprojFileReader.ReadFromFile(fileName);
                 }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Error reading CSPROJ: " + e.Message);
+                }
+
+                if (csprojData != null)
+                    files.Add(csprojData);
             }
 
-            // nodes
-            graphData.Nodes = data.Select(d => d.Node).ToList();
+            return files;
         }
 
-        private NodeDefinition CreateNodeFromCsprojFileData(CsprojFileData data, NodeState state)
+        private ICollection<SolutionFileData> FindSlnFiles(System.Threading.CancellationToken cancellationToken, IProgress<DiscoveryProgress> progress)
         {
-            return new NodeDefinition()
+            var files = new List<SolutionFileData>();
+
+            // find csproj files
+            foreach (var fileName in System.IO.Directory.EnumerateFiles(FolderPath, "*.sln", System.IO.SearchOption.AllDirectories))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                progress.Report(new DiscoveryProgress() { CurrentItem = fileName });
+
+                SolutionFileData slnData = null;
+                try
                 {
-                    Id = "csproj." + data.FileName,
-                    Name = Path.GetFileNameWithoutExtension(data.FileName),
-                    Path = data.FileName,
-                    State = state
-                };
+                    slnData = slnFileReader.ReadFromFile(fileName);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Error reading SLN: " + e.Message);
+                }
+
+                if (slnData != null)
+                    files.Add(slnData);
+            }
+
+            return files;
         }
     }
 }

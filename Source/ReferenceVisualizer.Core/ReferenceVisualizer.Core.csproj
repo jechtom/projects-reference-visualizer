@@ -41,8 +41,16 @@
   <ItemGroup>
     <Compile Include="DiscoveryProgress.cs" />
     <Compile Include="DotNetProjects\CsprojFileData.cs" />
+    <Compile Include="DotNetProjects\PathHelper.cs" />
+    <Compile Include="DotNetProjects\SolutionProjectGraphBuilder.cs" />
+    <Compile Include="DotNetProjects\DefaultProjectGraphBuilder.cs" />
+    <Compile Include="DotNetProjects\IDotNetProjectGraphBuilder.cs" />
+    <Compile Include="DotNetProjects\SolutionFileDataReader.cs" />
     <Compile Include="DotNetProjects\CsprojFileDataReader.cs" />
     <Compile Include="DotNetProjects\DotNetProjectGraphDiscoveryService.cs" />
+    <Compile Include="DotNetProjects\SolutionFileData.cs" />
+    <Compile Include="DotNetProjects\SolutionFileLineParser.cs" />
+    <Compile Include="DotNetProjects\SolutionProjectData.cs" />
     <Compile Include="GraphData.cs" />
     <Compile Include="IGraphDiscoveryService.cs" />
     <Compile Include="NodeDefinition.cs" />

@@ -7,7 +7,7 @@ namespace ReferenceVisualizer.Core
 {
     public class GraphData
     {
-        public ICollection<NodeDefinition> Nodes { get; set; }
+        public IDictionary<string, NodeDefinition> Nodes { get; set; }
         public ICollection<ReferenceDefinition> References { get; set; }
     }
 }

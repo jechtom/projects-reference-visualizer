@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:gs="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls"
         xmlns:wpfext="clr-namespace:WPFExtensions.Controls;assembly=WPFExtensions"
+        xmlns:my="clr-namespace:ReferenceVisualizer.WpfApp.Controls;assembly=ReferenceVisualizer.WpfApp.Controls"
         Title="Projects Reference Visualizer | Beta | Tomas Jecha (tomas@jecha.net)" Height="350" Width="525" WindowState="Maximized">
     <Window.Resources>
         <Style TargetType="Button">
@@ -51,41 +52,55 @@
             </Grid>
         </StackPanel>
         <wpfext:ZoomControl Grid.Row="1" Name="zoomControl">
-            <gs:GraphLayout
+            <my:ReferenceGraphLayout
                 x:Name="graphLayout" 
                 Graph="{Binding Graph}"
                 LayoutAlgorithmType="LinLog" 
                 OverlapRemovalAlgorithmType="FSA">
-                <gs:GraphLayout.Resources>
+                <my:ReferenceGraphLayout.Resources>
                     <Style TargetType="{x:Type gs:VertexControl}">
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type gs:VertexControl}">
-                                    <Border CornerRadius="3" BorderThickness="1" Padding="5" DataContext="{TemplateBinding Vertex}">
+                                    <Border CornerRadius="3" BorderThickness="1" Padding="3" DataContext="{TemplateBinding Vertex}">
                                         <Border.Style>
                                             <Style TargetType="Border">
-                                                <Setter Property="Background" Value="#FFA3E8AF" />
+                                                <Setter Property="Background" Value="#000" />
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding State}" Value="NotFound">
-                                                        <Setter Property="Background" Value="Red" />
+                                                    <DataTrigger Binding="{Binding Type}" Value="project.solution">
+                                                        <Setter Property="Background" Value="#AFFFA3E8" />
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding State}" Value="OutOfBound">
-                                                        <Setter Property="Background" Value="Yellow" />
+                                                    <DataTrigger Binding="{Binding Type}" Value="project.csproj">
+                                                        <Setter Property="Background" Value="#FFA3E8AF" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Name}" FontSize="16"/>
-                                            <TextBlock Text="{Binding Path}" FontSize="9"/>
-                                        </StackPanel>
+                                        <Border CornerRadius="3" Margin="3">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding State}" Value="NotFound">
+                                                            <Setter Property="Background" Value="Red" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding State}" Value="OutOfBound">
+                                                            <Setter Property="Background" Value="Yellow" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Name}" FontSize="16"/>
+                                                <TextBlock Text="{Binding Path}" FontSize="9"/>
+                                            </StackPanel>
+                                        </Border>
                                     </Border>
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
                     </Style>
-                </gs:GraphLayout.Resources>
-            </gs:GraphLayout>
+                </my:ReferenceGraphLayout.Resources>
+            </my:ReferenceGraphLayout>
         </wpfext:ZoomControl>
     </Grid>
 </Window>

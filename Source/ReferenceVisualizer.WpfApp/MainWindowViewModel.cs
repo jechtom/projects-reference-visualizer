@@ -28,7 +28,9 @@ namespace ReferenceVisualizer.WpfApp
         public async void Load()
         {
             Core.IGraphDiscoveryService discoveryService;
-            discoveryService = new Core.DotNetProjects.DotNetProjectGraphDiscoveryService()
+            Core.DotNetProjects.IDotNetProjectGraphBuilder graphBuilder;
+            graphBuilder = new Core.DotNetProjects.SolutionProjectGraphBuilder();
+            discoveryService = new Core.DotNetProjects.DotNetProjectGraphDiscoveryService(graphBuilder)
             {
                 FolderPath = this.Path
             };
@@ -39,7 +41,7 @@ namespace ReferenceVisualizer.WpfApp
                 BrowseCommand.ChangeCanExecuteChanged(false);
 
                 var result = await discoveryService.Resolve(new CancellationToken(), new Progress<Core.DiscoveryProgress>());
-                this.Graph = CreateUIGraphFromData(result);
+                this.Graph = new Controls.GraphDataConvertor().ConvertToGraph(result);
             }
             finally
             {
@@ -64,14 +66,14 @@ namespace ReferenceVisualizer.WpfApp
             
         }
 
-        public IBidirectionalGraph<object, QuickGraph.IEdge<object>> Graph
+        public object Graph
         {
-            get { return (IBidirectionalGraph<object, QuickGraph.IEdge<object>>)GetValue(GraphProperty); }
+            get { return (object)GetValue(GraphProperty); }
             set { SetValue(GraphProperty, value); }
         }
 
         public static readonly DependencyProperty GraphProperty =
-            DependencyProperty.Register("Graph", typeof(IBidirectionalGraph<object, QuickGraph.IEdge<object>>), typeof(MainWindowViewModel), new PropertyMetadata(null));
+            DependencyProperty.Register("Graph", typeof(object), typeof(MainWindowViewModel), new PropertyMetadata(null));
 
         public string Path
         {
@@ -81,27 +83,5 @@ namespace ReferenceVisualizer.WpfApp
 
         public static readonly DependencyProperty PathProperty =
             DependencyProperty.Register("Path", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(""));
-
-
-        private IBidirectionalGraph<object, IEdge<object>> CreateUIGraphFromData(Core.GraphData data)
-        {
-            var result = new QuickGraph.BidirectionalGraph<object, QuickGraph.IEdge<object>>();
-
-            // build key map
-            Dictionary<string, object> keyMap = data.Nodes.ToDictionary(n => n.Id, n => (object)n);
-
-            // add nodes
-            result.AddVertexRange(data.Nodes);
-
-            foreach (var reference in data.References)
-            {
-                object from = keyMap[reference.NodeFromId];
-                object to = keyMap[reference.NodeToId];
-
-                result.AddEdge(new QuickGraph.Edge<object>(from, to));
-            }
-
-            return result;
-        }
     }
 }

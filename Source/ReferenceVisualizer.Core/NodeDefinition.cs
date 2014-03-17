@@ -12,5 +12,6 @@ namespace ReferenceVisualizer.Core
         public string Name { get; set; }
         public string Path { get; set; }
         public NodeState State { get; set; }
+        public string Type { get; set; }
     }
 }

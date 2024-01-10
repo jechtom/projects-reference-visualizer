@@ -18,8 +18,8 @@ namespace ReferenceVisualizer.Core
         NotFound,
 
         /// <summary>
-        /// Node is out of searched bound.
+        /// Node is out of searched scope.
         /// </summary>
-        OutOfBound
+        OutOfContext
     }
 }

@@ -10,7 +10,7 @@ namespace ReferenceVisualizer.Core.DotNetProjects
 {
     public class SolutionFileDataReader
     {
-        public SolutionFileData ReadFromFile(string filename)
+        public SolutionFileData ReadFromFile(string filename, IProgress<DiscoveryProgress> progress)
         {
             var result = new SolutionFileData()
             {
@@ -36,8 +36,20 @@ namespace ReferenceVisualizer.Core.DotNetProjects
                         continue;
 
                     // resolve full path and add to collection
-                    projectReference.FullPath = Path.GetFullPath(Path.Combine(filenameDirectory, projectReference.RelativePath));
-                    result.Projects.Add(projectReference);
+                    try
+                    {
+                        projectReference.FullPath = Path.GetFullPath(Path.Combine(filenameDirectory, projectReference.RelativePath));
+                        result.Projects.Add(projectReference);
+                    }
+                    catch(NotSupportedException)
+                    {
+                        // invoked on invalid path
+                        progress.Report(new DiscoveryProgress()
+                        {
+                            CurrentItem = filename,
+                            ErrorMessage = $"Not supported path in solution file: {projectReference.RelativePath}"
+                        });
+                    }
                 }
             }
 

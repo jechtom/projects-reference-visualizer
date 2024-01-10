@@ -17,9 +17,6 @@ namespace ReferenceVisualizer.WpfApp
         {
             LoadCommand = new FuncCommand(Load);
             BrowseCommand = new FuncCommand(Browse);
-#if DEBUG
-            this.Path = @"d:\Avast.InternalSystem";
-#endif
         }
 
         public FuncCommand LoadCommand { get; private set; }
@@ -27,10 +24,8 @@ namespace ReferenceVisualizer.WpfApp
 
         public async void Load()
         {
-            Core.IGraphDiscoveryService discoveryService;
-            Core.DotNetProjects.IDotNetProjectGraphBuilder graphBuilder;
-            graphBuilder = new Core.DotNetProjects.SolutionProjectGraphBuilder();
-            discoveryService = new Core.DotNetProjects.DotNetProjectGraphDiscoveryService(graphBuilder)
+            var graphBuilder = new Core.DotNetProjects.SolutionProjectGraphBuilder();
+            var discoveryService = new Core.DotNetProjects.DotNetProjectsDiscoveryService()
             {
                 FolderPath = this.Path
             };
@@ -40,8 +35,9 @@ namespace ReferenceVisualizer.WpfApp
                 LoadCommand.ChangeCanExecuteChanged(false);
                 BrowseCommand.ChangeCanExecuteChanged(false);
 
-                var result = await discoveryService.Resolve(new CancellationToken(), new Progress<Core.DiscoveryProgress>());
-                this.Graph = new Controls.GraphDataConvertor().ConvertToGraph(result);
+                var data = discoveryService.Discover(new CancellationToken(), new Progress<Core.DiscoveryProgress>());
+                var graph = graphBuilder.Build(discoveryService.FolderPathFullPath, data);
+                this.Graph = new Controls.GraphDataConvertor().ConvertToGraph(graph);
             }
             finally
             {

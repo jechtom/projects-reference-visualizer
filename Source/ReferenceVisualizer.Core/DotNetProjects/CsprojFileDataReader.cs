@@ -9,7 +9,7 @@ namespace ReferenceVisualizer.Core.DotNetProjects
 {
     public class CsprojFileDataReader
     {
-        public CsprojFileData ReadFromFile(string filename)
+        public CsprojFileData ReadFromFile(string filename, IProgress<DiscoveryProgress> progress)
         {
             var result = new CsprojFileData()
             {

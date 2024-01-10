@@ -9,6 +9,7 @@ namespace ReferenceVisualizer.Core.DotNetProjects
     public class CsprojFileData
     {
         public string FileName { get; set; }
+
         public ICollection<string> References { get; set; }
     }
 }

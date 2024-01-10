@@ -7,20 +7,20 @@ using System.Threading.Tasks;
 
 namespace ReferenceVisualizer.Core.DotNetProjects
 {
-    public class SolutionProjectGraphBuilder : IDotNetProjectGraphBuilder
+    public class SolutionProjectGraphBuilder
     {
-        public GraphData Build(DotNetProjectGraphDiscoveryService service, ICollection<CsprojFileData> projects, ICollection<SolutionFileData> solutions)
+        public GraphData Build(string scopePath, DotNetProjectsData projectData)
         {
             var graphData = new GraphData();
 
             // crete nodes from csproj data
-            var projectsWithNode = projects.Select(fd => new
+            var projectsWithNode = projectData.CsprojFiles.Select(fd => new
             {
                 FileData = fd,
                 Node = CreateNodeFromCsprojFileData(fd, NodeState.Normal)
             }).ToList();
 
-            var solutionsWithNode = solutions.Select(fd => new
+            var solutionsWithNode = projectData.SolutionFiles.Select(fd => new
             {
                 FileData = fd,
                 Node = CreateNodeFromSolutionFileData(fd, NodeState.Normal)
@@ -40,12 +40,12 @@ namespace ReferenceVisualizer.Core.DotNetProjects
                     if (referencedNode == null)
                     {
                         // not found - create "not found" node
-                        bool outOfBound = PathHelper.IsDescendant(service.FolderPathFullPath, reference.FullPath);
+                        bool outOfBound = PathHelper.IsDescendant(scopePath, reference.FullPath);
                         var missingReferenceData = new CsprojFileData() { FileName = reference.FullPath };
                         referencedNode = new
                         {
                             FileData = missingReferenceData,
-                            Node = CreateNodeFromCsprojFileData(missingReferenceData, outOfBound ? NodeState.OutOfBound : NodeState.NotFound)
+                            Node = CreateNodeFromCsprojFileData(missingReferenceData, outOfBound ? NodeState.OutOfContext : NodeState.NotFound)
                         };
                         projectsWithNode.Add(referencedNode);
                     }
@@ -72,11 +72,11 @@ namespace ReferenceVisualizer.Core.DotNetProjects
         {
             return new NodeDefinition()
                 {
-                    Id = "project.csproj." + data.FileName,
+                    Id = "dotnet.csproj." + data.FileName,
                     Name = Path.GetFileNameWithoutExtension(data.FileName),
                     Path = data.FileName,
                     State = state,
-                    Type = "project.csproj"
+                    Type = "dotnet.csproj"
                 };
         }
 
@@ -84,11 +84,11 @@ namespace ReferenceVisualizer.Core.DotNetProjects
         {
             return new NodeDefinition()
             {
-                Id = "project.solution." + data.FileName,
+                Id = "dotnet.sln." + data.FileName,
                 Name = Path.GetFileNameWithoutExtension(data.FileName),
                 Path = data.FileName,
                 State = state,
-                Type = "project.solution"
+                Type = "dotnet.sln"
             };
         }
     }

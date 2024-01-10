@@ -8,5 +8,6 @@ namespace ReferenceVisualizer.Core
     public class DiscoveryProgress
     {
         public string CurrentItem { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

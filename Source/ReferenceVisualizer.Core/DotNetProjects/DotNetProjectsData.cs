@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ReferenceVisualizer.Core.DotNetProjects
 {
-    public class SolutionFileData
+    public class DotNetProjectsData
     {
-        public ICollection<SolutionProjectData> Projects { get; set; }
-        public string FileName { get; set; }
+        public ICollection<CsprojFileData> CsprojFiles { get; set; }
+        public ICollection<SolutionFileData> SolutionFiles { get; set; }
     }
 }

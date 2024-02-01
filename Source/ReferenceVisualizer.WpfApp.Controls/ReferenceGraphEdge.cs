@@ -10,8 +10,8 @@ namespace ReferenceVisualizer.WpfApp.Controls
     {
         public ReferenceGraphEdge(Core.NodeDefinition source, Core.NodeDefinition target)
         {
-            this.Source = source;
-            this.Target = target;
+            Source = source;
+            Target = target;
         }
 
         public Core.NodeDefinition Source { get; set; }

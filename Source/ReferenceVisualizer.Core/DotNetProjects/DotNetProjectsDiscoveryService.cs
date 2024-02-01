@@ -2,12 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Linq;
 
 namespace ReferenceVisualizer.Core.DotNetProjects
 {
@@ -63,7 +58,7 @@ namespace ReferenceVisualizer.Core.DotNetProjects
         {
             Stopwatch sw = Stopwatch.StartNew();
 
-            foreach(var path in Directory.EnumerateFileSystemEntries(FolderPath, "*", SearchOption.AllDirectories))
+            foreach(var path in Directory.EnumerateFileSystemEntries(FolderPath, "*.csproj;*.sln", SearchOption.AllDirectories))
             {
                 if(sw.ElapsedMilliseconds > 100)
                 {

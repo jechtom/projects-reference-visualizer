@@ -8,6 +8,6 @@ namespace ReferenceVisualizer.Core
     public class GraphData
     {
         public IDictionary<string, NodeDefinition> Nodes { get; set; }
-        public ICollection<ReferenceDefinition> References { get; set; }
+        public ICollection<DependenceDefinition> References { get; set; }
     }
 }

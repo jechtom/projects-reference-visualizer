@@ -18,8 +18,8 @@ namespace ReferenceVisualizer.WpfApp.Controls
 
             foreach (var reference in data.References)
             {
-                NodeDefinition from = data.Nodes[reference.NodeFromId];
-                NodeDefinition to = data.Nodes[reference.NodeToId];
+                NodeDefinition from = data.Nodes[reference.DependentNodeId];
+                NodeDefinition to = data.Nodes[reference.DependenceNodeId];
 
                 result.AddEdge(new ReferenceGraphEdge(from, to));
             }

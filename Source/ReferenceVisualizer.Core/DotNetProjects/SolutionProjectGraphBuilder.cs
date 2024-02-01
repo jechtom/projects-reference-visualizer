@@ -27,7 +27,7 @@ namespace ReferenceVisualizer.Core.DotNetProjects
             }).ToList();
 
             // references
-            graphData.References = new List<ReferenceDefinition>();
+            graphData.References = new List<DependenceDefinition>();
             foreach (var item in solutionsWithNode)
             {
                 var directory = Path.GetDirectoryName(item.FileData.FileName);
@@ -51,10 +51,11 @@ namespace ReferenceVisualizer.Core.DotNetProjects
                     }
 
                     // create reference
-                    graphData.References.Add(new ReferenceDefinition()
+                    graphData.References.Add(new DependenceDefinition()
                         {
-                            NodeFromId = item.Node.Id,
-                            NodeToId = referencedNode.Node.Id
+                            DependentNodeId = item.Node.Id,
+                            DependenceNodeId = referencedNode.Node.Id,
+                            Type = "project"
                         });
                 }
             }

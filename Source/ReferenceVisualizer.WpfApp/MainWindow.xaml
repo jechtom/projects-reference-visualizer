@@ -62,16 +62,19 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type gs:VertexControl}">
-                                    <Border CornerRadius="3" BorderThickness="1" Padding="3" DataContext="{TemplateBinding Vertex}">
+                                    <Border CornerRadius="3" BorderThickness="1" Padding="3" DataContext="{TemplateBinding Vertex}" ToolTip="{Binding Note}">
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="Background" Value="#000" />
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Type}" Value="project.solution">
+                                                    <DataTrigger Binding="{Binding Type}" Value="dotnet.sln">
                                                         <Setter Property="Background" Value="#AFFFA3E8" />
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Type}" Value="project.csproj">
+                                                    <DataTrigger Binding="{Binding Type}" Value="dotnet.csproj">
                                                         <Setter Property="Background" Value="#FFA3E8AF" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Type}" Value="group">
+                                                        <Setter Property="Background" Value="#FF238CC3" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>

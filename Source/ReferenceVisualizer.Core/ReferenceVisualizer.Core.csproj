@@ -53,9 +53,10 @@
     <Compile Include="DotNetProjects\SolutionProjectData.cs" />
     <Compile Include="GraphData.cs" />
     <Compile Include="NodeDefinition.cs" />
+    <Compile Include="NodeGroupingProcessor.cs" />
     <Compile Include="NodeState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReferenceDefinition.cs" />
+    <Compile Include="DependenceDefinition.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

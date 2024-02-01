@@ -1,8 +1,10 @@
 ﻿using QuickGraph;
+using ReferenceVisualizer.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -30,13 +32,24 @@ namespace ReferenceVisualizer.WpfApp
                 FolderPath = this.Path
             };
 
+            Regex pathPath = new Regex(@"\\CMS\\(?<name>(SOURCE|TEST|Support)\\[^\\]+\\[^\\]+)\\");
+            var groupingProcessor = new NodeGroupingProcessor(node =>
+            {
+                var match = pathPath.Match(node.Path);
+                if (match.Success)
+                {
+                    return match.Groups["name"].Value;
+                }
+                return null;
+            });
+
             try
             {
                 LoadCommand.ChangeCanExecuteChanged(false);
                 BrowseCommand.ChangeCanExecuteChanged(false);
-
                 var data = discoveryService.Discover(new CancellationToken(), new Progress<Core.DiscoveryProgress>());
                 var graph = graphBuilder.Build(discoveryService.FolderPathFullPath, data);
+                //graph = groupingProcessor.Group(graph);
                 this.Graph = new Controls.GraphDataConvertor().ConvertToGraph(graph);
             }
             finally
